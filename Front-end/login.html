@@ -18,32 +18,29 @@
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o envio do formulário padrão
+            event.preventDefault(); 
 
-            // Captura os valores dos inputs
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // URL para onde a requisição será enviada
             const url = 'http://localhost:3000/auth/login';
             const token = ''
-            // Dados que serão enviados no corpo da requisição
+           
             const data = {
                 email: email,
                 password: password
             };
 
-            // Configuração da requisição
             const options = {
-                method: 'POST', // Método HTTP
+                method: 'POST', 
                 headers: {
-                    //'Authorization': `Bearer ${token}`, 
-                    'Content-Type': 'application/json' // Tipo de conteúdo
+                    
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data) // Corpo da requisição em formato JSON
+                body: JSON.stringify(data) 
             };
 
-            // Realizando a requisição
             fetch(url, options)
            
                 .then(response => {
@@ -65,7 +62,7 @@
                     
                 })
                 .catch(error => {
-                    // Tratamento de erros
+                
                     console.error('Erro:', error);
                 });
         });

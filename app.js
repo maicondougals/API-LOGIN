@@ -10,25 +10,22 @@ const cors = require('cors');
 
 
 
-// Use o middleware CORS
+
 app.use(cors());
 
 
-//configuração json response
 app.use(express.json())
 
-// Models com usuarios
 const User = require('./models/User')
 
 app.get('/', (req, res) =>{
     res.status(200).json({msg: 'bem vindo'})
 })
 
-//private route
+
 app.get('/user/:id', checkToken, async(req,res)=>{
     const id = req.params.id
 
-    //checar se o id existe
     const user = await User.findById(id, '-password')
 
     if(!user){
@@ -38,7 +35,7 @@ app.get('/user/:id', checkToken, async(req,res)=>{
     res.status(200).json({user})
 })
 
-//verifica token
+
 function checkToken(req, res, next){
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
@@ -61,7 +58,7 @@ function checkToken(req, res, next){
 }
 
 
-//registrar usuário
+
 app.post('/auth/register', async(req, res) =>{
     const{name, email, password, confirmpassword} = req.body
 
@@ -78,20 +75,20 @@ app.post('/auth/register', async(req, res) =>{
         return res.status(422).json({msg : 'As senhas não conferem'})
     }
 
-    //conferir se o usuário já existe 
+
     const userExist = await User.findOne({email: email})
 
     if(userExist){
         return res.status(422).json({msg : 'Utilize outro email'})
     }
 
-    //criar senha
+
     const salt = await bcrypt.genSalt(12)
     const passwordHash = await bcrypt.hash(password, salt)
 
 
 
-    //criar usuário
+
     const user = new User({
         name, 
         email,
@@ -118,7 +115,6 @@ app.post('/auth/login', async(req, res) =>{
         return res.status(404).json({msg : 'Usuário não encontrado'})
     }
 
-    //verificar se a senha conincide 
     const checkPassord = await bcrypt.compare(password, user.password)
     if(!checkPassord){
         return res.status(422).json({msg : 'Senha incorreta'})
