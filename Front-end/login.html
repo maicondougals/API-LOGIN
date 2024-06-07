@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch POST Example</title>
+</head>
+<body>
+    <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio do formulário padrão
+
+            // Captura os valores dos inputs
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // URL para onde a requisição será enviada
+            const url = 'http://localhost:3000/auth/login';
+            const token = ''
+            // Dados que serão enviados no corpo da requisição
+            const data = {
+                email: email,
+                password: password
+            };
+
+            // Configuração da requisição
+            const options = {
+                method: 'POST', // Método HTTP
+                headers: {
+                    //'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json' // Tipo de conteúdo
+                },
+                body: JSON.stringify(data) // Corpo da requisição em formato JSON
+            };
+
+            // Realizando a requisição
+            fetch(url, options)
+           
+                .then(response => {
+                    if (response.status === 404){
+                        throw new Error('Usuário não encontrado.');
+                    }
+                    if (response.status === 422){
+                        throw new Error('Senha incorreta.');
+                    }
+                    if (response.ok ){
+                        
+                        console.log('Logado com sucesso!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                
+                    console.log('Resposta recebida:', data);
+                    
+                })
+                .catch(error => {
+                    // Tratamento de erros
+                    console.error('Erro:', error);
+                });
+        });
+    </script>
+</body>
+</html>
