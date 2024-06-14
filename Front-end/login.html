@@ -3,19 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch POST Example</title>
+    <title>Login</title>
+    <style>
+        body{
+           background-color: grey;
+            padding: 0;
+            max-height: 100vh;
+       
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, button{
+            width: 30vw;
+            height: 30px;
+            border-radius: 24px;
+            border: none;
+            font-size: 18px;
+        }
+        label{
+            margin: 10px;
+        }
+        input{
+            margin: 10px;
+        }
+        button{
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
     <form id="loginForm">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
-        <br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-        <br>
         <button type="submit">Login</button>
     </form>
 
+    <a href="cadastro.html">É novo aqui? Faça seu cadastro</a>
+    <span id="span"></span>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); 
@@ -23,6 +56,8 @@
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+
+            const msg = document.getElementById('span')
 
             const url = 'http://localhost:3000/auth/login';
             const token = ''
@@ -51,8 +86,12 @@
                         throw new Error('Senha incorreta.');
                     }
                     if (response.ok ){
-                        
+                        let success = `<span> Logado com Sucesso </span>` ;
+                        status.innerHTML = success;
+                      
                         console.log('Logado com sucesso!');
+                        localStorage.setItem('token', data.token);
+                         window.location.href = '/restricted.html';
                     }
                     return response.json();
                 })
@@ -62,7 +101,8 @@
                     
                 })
                 .catch(error => {
-                
+                    let erro = `<span> ${error} </span>` ;
+                    msg.innerHTML = erro;
                     console.error('Erro:', error);
                 });
         });

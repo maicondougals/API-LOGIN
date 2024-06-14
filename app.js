@@ -34,6 +34,9 @@ app.get('/user/:id', checkToken, async(req,res)=>{
 
     res.status(200).json({user})
 })
+app.get('/restricted', checkToken, (req, res) => {
+    res.sendFile(path.join(__dirname, 'restricted.html'));
+  });
 
 
 function checkToken(req, res, next){
