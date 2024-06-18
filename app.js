@@ -1,9 +1,9 @@
 require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const path = require('path');
+const express = require('express'); //framework do nodejs
+const mongoose = require('mongoose'); //para fazer a ligação com o banco de dados, no caso o mongodb
+const bcrypt = require('bcrypt'); // necessário para segurança criptografando senha
+const jwt = require('jsonwebtoken'); // necessário para segurança gerando tokens para autenticação 
+const path = require('path'); //graças a esse modulo eu consegui pegar a página retricted.html e apresentar numa rota
 
 const app = express();
 const secret = process.env.SECRET; //Código secreto encontrado no .env para maior segurança
@@ -57,7 +57,7 @@ function checkToken(req, res, next) {
   }
 
 
-app.post('/auth/register', async (req, res) => {
+app.post('/auth/register', async (req, res) => { //rota de cadastro de usuário no banco de dados
     const { name, email, password, confirmpassword } = req.body; //captando strings que serão necessárias 
 
     if (!name) {
@@ -97,7 +97,7 @@ app.post('/auth/register', async (req, res) => {
     }
 });
 
-app.post('/auth/login', async (req, res) => {
+app.post('/auth/login', async (req, res) => { //rota de login
     const { email, password } = req.body;
 
     try {
@@ -106,14 +106,14 @@ app.post('/auth/login', async (req, res) => {
         if (!user) {
             return res.status(404).json({ msg: 'Usuário não encontrado' });
         }
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        const isPasswordCorrect = await bcrypt.compare(password, user.password); //constante que tem como pre determinação checar se a senha é igual a cadastrada
             if (!isPasswordCorrect) {
             return res.status(422).json({ msg: 'Senha incorreta' });
         }
 
      
        
-        const token = jwt.sign({ id: user.id, email: user.email }, secret, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, email: user.email }, secret, { expiresIn: '1h' }); //constante que gera um token com base nas informações contidas
 
         res.status(200).json({ msg: 'Autenticação realizada com sucesso', token });
     } catch (error) {
@@ -123,13 +123,13 @@ app.post('/auth/login', async (req, res) => {
 });
 
 app.get('/restricted', checkToken,  (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/restricted.html'));
+    res.sendFile(path.join(__dirname, 'views/restricted.html'));//esse mecanismo pega uma página html encontrada no back-end e apresenta no front-end nessa rota, graças ao 'path'
 });
 
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.BR_PASS;
+const dbUser = process.env.DB_USER; //constante que capta o usuario em .env
+const dbPassword = process.env.BR_PASS;//constante que capta a senha em .env
 
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.nskqgcr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.nskqgcr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`) //código para fazer ligação com o mango db utilizando mongoose
     .then(() => {
         const PORT = 3001;
         app.listen(PORT, () => {
